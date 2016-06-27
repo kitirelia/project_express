@@ -2,7 +2,7 @@
   "name": "epress_project",
   "version": "1.0.0",
   "description": "test create webapp with express",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
