@@ -19,7 +19,26 @@ router.get('/user',function(req,res){
 });
 router.get('/user/:id', function (req, res) {
     var id = req.params.id;
-    res.json(users.findById(id));
+    var arr= users.findById(id);
+
+   var obj={
+   		data:{
+		   	head:{
+		   		title:"head_title"
+		   	},
+		   	body:{
+		   		body_color:'black',
+		   		username:'mel_b',
+		   		message:'hello this is me!',
+		   		names:['morata','worth it','acivii','john legend']
+		   	},
+		   	footer:{
+		   		message:null,
+		   		blank:undefined
+		   	}
+	    }
+    }
+    res.render('pages/feed',obj);
 });
 
 // define the about route

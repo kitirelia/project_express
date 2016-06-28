@@ -1,0 +1,37 @@
+<!-- views/pages/feed.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ../partials/feed_head %>
+</head>
+<body class="container">
+
+    <header>
+        <% include ../partials/header %>
+    </header>
+
+    <main>
+
+
+        <div class='container'>
+            <% include ../partials/upload_form %>
+
+            <% if (typeof data != "undefined") { %>
+                <script type="text/javascript">
+                    var initData = <%-JSON.stringify(data)%>;
+                    console.log('dat '+initData.body.username);
+                </script>
+               <h1>found </h1>
+            <% } else{ %>
+               <h1>bar</h1>
+             <% } %>
+        </div>
+    </main>
+
+    <footer>
+        <% include ../partials/footer %>
+    </footer>
+    
+</body>
+</html>
