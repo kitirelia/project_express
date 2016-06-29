@@ -10,27 +10,29 @@ var storage = multer.diskStorage({
       if (err) return cb(err)
 
       cb(null, raw.toString('hex') + path.extname(file.originalname))
-    })
-  }
-});
+    })}
+});//end storage
 
-var upload = multer({ storage: storage });
-// var upload = multer({dest:'./uploads/xxx',
-// 	rename: function(fieldname, filename) {
-//         return Date.now()+".jpg";
-//     }
-// });
+//var upload = multer({ storage: storage }); //work fine
+var upload = multer({ storage: storage }).single('avatar');
 
 router.get('/', function(req, res) {
   console.log('GET upload page');
   res.send('Hello');
 }); 
 
-router.post('/', upload.single('avatar'),  function(req, res) {
- 	console.log('file name  '+req.file.filename);
- 	console.log('caption '+req.body.caption)
+//router.post('/', upload.single('avatar'),  function(req, res) {//work fine!
+router.post('/',  function(req, res) {
+	upload(req,res,function (err){
+		if(err){
+			return;
+		}
+		res.send('uploaded!');
+	});
+ 	//console.log('file name  '+req.file.filename);
+ 	//console.log('caption '+req.body.caption)
   //console.log(req.file);
-	res.send('Successfully uploaded!');
+	
 });
 
 module.exports = router;
