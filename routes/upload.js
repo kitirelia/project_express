@@ -14,7 +14,7 @@ var storage = multer.diskStorage({
     })}
 });//end storage
 
-//var upload = multer({ storage: storage }); //work fine
+
 var upload = multer({ storage: storage }).single('avatar');
 
 router.get('/', function(req, res) {
@@ -22,13 +22,12 @@ router.get('/', function(req, res) {
   res.send('Hello');
 }); 
 
-//router.post('/', upload.single('avatar'),  function(req, res) {//work fine!
 router.post('/',  function(req, res) {
 	upload(req,res,function (err){
 		if(err){
 			return;
 		}
-		res.send('uploaded!');
+		res.send('uploaded! '+req.file.filename);
 	});
  	//console.log('file name  '+req.file.filename);
  	//console.log('caption '+req.body.caption)
