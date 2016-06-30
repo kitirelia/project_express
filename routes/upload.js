@@ -3,8 +3,9 @@ var multer = require('multer');
 var path = require('path');
 var crypto = require('crypto');
 var router = express.Router();
+var image_folder = "./uploads/"
 var storage = multer.diskStorage({
-  destination: './uploads/',
+  destination: image_folder,
   filename: function (req, file, cb) {
     crypto.pseudoRandomBytes(16, function (err, raw) {
       if (err) return cb(err)
