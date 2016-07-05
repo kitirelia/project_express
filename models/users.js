@@ -1,42 +1,47 @@
-var users = [
-    {
-        "id": 1,
-        "username": "goldroger",
-        "name": "Gol D. Roger",
-        "position": "Pirate King"
-    },
-    {
-        "id": 2,
-        "username": "mrzero",
-        "name": "Sir Crocodile",
-        "position": "Former-Shichibukai"
-    },
-    {
-        "id": 3,
-        "username": "luffy",
-        "name": "Monkey D. Luffy",
-        "position": "Captain"
-    },
-    {
-        "id": 4,
-        "username": "kuzan",
-        "name": "Aokiji",
-        "position": "Former Marine Admiral"
-    },
-    {
-        "id": 5,
-        "username": "shanks",
-        "name": "'Red-Haired' Shanks",
-        "position": "The 4 Emperors"
-    }
-];
 
-exports.findAll = function() {
-    return users;
+//---------
+var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
+var Schema = mongoose.Schema;
+
+var validateEmail = function(email) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
+};
+var userSchema = new Schema({
+  name: String,
+  username: { type: String, required: [true,'why no username'], unique: true },
+  password: { type: String, required:[true,'why no password']},
+  email: { 
+    type: String, 
+    required: [true,'blank email'],
+    unique: true,
+    trim:true,
+    validate:[validateEmail, 'Please fill a valid email address'],
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+  },
+  admin: Boolean,
+  location: String,
+  meta: {
+    age: Number,
+    website: String
+  },
+  created_at: Date,
+  updated_at: Date
+});
+
+userSchema.plugin(uniqueValidator);
+userSchema.set('collection', 'user_data');
+
+
+userSchema.methods.dudify = function() {
+  this.name = this.name + '-dude'; 
+  return this.name;
 };
 
-exports.findById = function (id) {
-    for (var i = 0; i < users.length; i++) {
-        if (users[i].id == id) return users[i];
-    }
-};
+
+var User = mongoose.model('user_data', userSchema);
+
+
+//ake this available to our users in our Node applications
+module.exports = User;
