@@ -9,9 +9,9 @@ var validateEmail = function(email) {
     return re.test(email)
 };
 var userSchema = new Schema({
-  name: String,
-  username: { type: String, required: [true,'why no username'], unique: true },
-  password: { type: String, required:[true,'why no password']},
+  name: { type:String,required: [true,'no Name'], trim:true},
+  username: { type: String, required: [true,'no username'], trim:true,unique: true },
+  password: { type: String, trim:true,required:[true,'no password']},
   email: { 
     type: String, 
     required: [true,'blank email'],
@@ -20,6 +20,7 @@ var userSchema = new Schema({
     validate:[validateEmail, 'Please fill a valid email address'],
     match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
   },
+  profile_image:String,
   admin: Boolean,
   location: String,
   meta: {
