@@ -13,28 +13,47 @@
         $('#uploadForm').submit(function(event) {
             event.preventDefault(); // Stops browser from navigating away from page
            $('#result_process').text("");
-           // var s_name ="asdf";
-            var data = $('form').serializeArray();
-            console.log("data is "+data);
-            //console.log("name "+($('#id_name').value());
-            $.post('/api/v1', data, function(resp) {
-            //alert(resp);
-            console.log(resp);
-            if(resp.result==="success"){
-                $('#result_process').text("Success!");
-            }else{
-                $('#result_process').text(resp.message);
-            }
-            // do something when it was successful
-            });
-    });
+            var data = $('#uploadForm').serializeArray();
+            $.post( "/api/v1",data, function(resp) {
+              //alert( "success "+resp.message );
+            })
+              .done(function(resp) {
+                console.log( "second success"+resp.message );
+                    $('#result_process').text(resp.message);
+              })
+              .fail(function(resp) {
+               console.log( "error"+resp.message );
+                $('#result_process').text("connection failed");
+              });
+            });//end post
 
             //--------------
 
             function status(message) {
                 $('#status').text(message);
             }
-
+            //---------- upload---
+            $('#image_upload_form').submit(function(event) {
+                event.preventDefault(); 
+                var form_data = new FormData(this);
+               $.ajax({
+                    type:'POST',
+                    url: '/upload',
+                    data:form_data,
+                    cache:false,
+                    contentType: false,
+                    processData: false,
+                    success:function(data){
+                        console.log("success");
+                        console.log(data);
+                    },
+                    error: function(data){
+                        console.log("error");
+                        console.log(data);
+                    }
+                });
+               return false;
+            });//end $('#image_upload_fo
         });//end ready
     </script>
 </head>
@@ -45,7 +64,9 @@
     <div class="container">
         <div class="row">
             <div class="row">
-              <div class="col-xs-6 col-md-4">left</div>
+              <div class="col-xs-6 col-md-4">
+                <% include ../partials/upload_form %>
+              </div> <!-- end left col -->
               <div id='main' class="col-xs-6 col-md-4">
                 <div class="input-group input-group-sm"> <!-- action="/api/v1" --> 
                    <form id='uploadForm' method="post">
@@ -58,6 +79,9 @@
                 </div>
                 <div id='status'>
                     here
+                </div>
+                <div id='status_progress'>
+                    status progress
                 </div>
                 <div id='result_process'>
                     
