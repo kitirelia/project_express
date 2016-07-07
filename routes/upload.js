@@ -33,18 +33,20 @@ router.get('/', function(req, res) {
 router.post('/',  function(req, res) {
   //console.log('debug caption '+req.body.caption);
 	upload(req,res,function (err){
-    console.log('track usernaem '+req.body.username);
-    console.log('track caption '+req.body.caption);
+    //console.log('track usernaem '+req.body.username);
+    //console.log('track caption '+req.body.caption);
     var result_str = "";
     var msg="";
 		if(err){
 			return result_str="error";
 		}else{
       if(req.file){
-
-
+         console.log(chalk.cyan(req.file.filename));
+         var create_at="";
         var content = new Content({
-            caption : req.body.caption
+            caption : req.body.caption,
+            filename:req.file.filename,
+            create_date:create_at
         });
         content.save(function (err){
           if(err){

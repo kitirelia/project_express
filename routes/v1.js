@@ -16,7 +16,7 @@ router.use(bodyParser.json()); // support json encoded bodies
 router.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 mongoose.connect('localhost:27017/arsenal_db');
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 mongoose.connection.on('open', function (ref) {
 	//console.log(chalk.green('Connected to mongo server.'));
 });

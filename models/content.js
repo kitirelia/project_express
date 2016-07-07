@@ -18,7 +18,9 @@ autoIncrement.initialize(mongoose.connection);
 var Schema = mongoose.Schema;
 var contentSchema = new Schema({
 	post_id:Number,
-	caption:String
+	caption:String,
+	filename:String,
+	create_date:Date
 });
 contentSchema.plugin(autoIncrement.plugin,{model:'content_data' ,field: 'post_id'});
 contentSchema.set('collection', 'content_data');
