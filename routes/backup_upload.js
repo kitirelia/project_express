@@ -5,8 +5,7 @@ var crypto = require('crypto');
 var bodyParser = require('body-parser');
 var router = express.Router();
 var image_folder = "./uploads/";
-var Content = require('../models/content');
-var chalk = require('chalk');
+
 
 
 var storage = multer.diskStorage({
@@ -41,24 +40,8 @@ router.post('/',  function(req, res) {
 			return result_str="error";
 		}else{
       if(req.file){
-
-
-        var content = new Content({
-            caption : req.body.caption
-        });
-        content.save(function (err){
-          if(err){
-            console.log(chalk.red('Save data error.'));
-             result_str="save fial";
-             msg='Save data error';
-          }
-          console.log(chalk.green('Save data Success'));
-           result_str="save success";
-           msg='ok';
-        });//end save
-
-        // result_str="success";
-        // msg='ok';
+        result_str="success";
+        msg='ok';
       }
       else{
         result_str="error";

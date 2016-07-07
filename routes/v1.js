@@ -18,12 +18,12 @@ router.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 mongoose.connect('localhost:27017/arsenal_db');
 mongoose.set('debug', true);
 mongoose.connection.on('open', function (ref) {
-	console.log(chalk.green('Connected to mongo server.'));
+	//console.log(chalk.green('Connected to mongo server.'));
 });
 
 mongoose.connection.on('error', function (err) {
- console.log(chalk.red('Connected to mongo server.'));
-  console.log(err);
+// console.log(chalk.red('Connected to mongo server.'));
+  //console.log(err);
 });
 
 router.get('/',function (req,res){
