@@ -41,20 +41,30 @@ router.post('/',  function(req, res) {
 			return result_str="error";
 		}else{
       if(req.file){
-         console.log(chalk.cyan(req.file.filename));
-         var create_at="";
-        var content = new Content({
+         console.log(chalk.magenta("check time "+req.body.create_date));
+          //console.log(req.body.create_date);
+         var tmp_create_at=req.body.create_date.trim();
+          console.log(chalk.magenta("trim|"+tmp_create_at+"|",tmp_create_at.length));
+         if(tmp_create_at ===null || tmp_create_at===undefined ||tmp_create_at.length<1){
+            tmp_create_at=Math.round(+new Date());
+            console.log(chalk.yellow("create self timestamp ",tmp_create_at));
+         }
+         console.log(chalk.cyan("before add  "+tmp_create_at));
+         var content = new Content({
             caption : req.body.caption,
             filename:req.file.filename,
-            create_date:create_at
+            createdAt:tmp_create_at
         });
         content.save(function (err){
+          //console.log(chalk.white("obj time is ",this.create_date));
           if(err){
             console.log(chalk.red('Save data error.'));
              result_str="save fial";
              msg='Save data error';
           }
-          console.log(chalk.green('Save data Success'));
+            
+          
+          console.log(chalk.green('Save data Success ',this.create_date));
            result_str="save success";
            msg='ok';
         });//end save
