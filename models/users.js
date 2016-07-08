@@ -27,7 +27,11 @@ var userSchema = new Schema({
     age: Number,
     website: String
   },
-  created_at: Date,
+  created_at: {
+        type: Date,
+        required: false,
+        default: Date.now
+     },
   updated_at: Date
 });
 
@@ -40,9 +44,15 @@ userSchema.methods.dudify = function() {
   return this.name;
 };
 
+userSchema.methods.checkExist = function(cb){
+  return this.model('user_data').find({ username: this.username }, cb);
+  //var username = this.username;
+  //return 'May '+username;
+};
 
 var User = mongoose.model('user_data', userSchema);
 
 
+//module.exports.myFunc1 = myFunc1;
 //ake this available to our users in our Node applications
 module.exports = User;

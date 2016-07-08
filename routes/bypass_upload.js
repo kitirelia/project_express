@@ -4,6 +4,8 @@ var path = require('path');
 var multer = require('multer');
 var crypto = require('crypto');
 var image_folder = "./uploads/flash";
+var User = require('../models/users');
+var Content = require('../models/content');
 var router = express.Router();
 
 
@@ -17,34 +19,82 @@ var storage = multer.diskStorage({
     })}
 });//end storage
 
-
-//var upload = multer({ storage: storage }).single('this_image');
-// app.post('/profile', upload.single('avatar'), function (req, res, next) {
-  
-// })
 var upload = multer({ storage: storage }).array('photo',2);
-//app.post('/photos/upload', upload.array('photos', 12), function (req, res, next) {
-  // req.files is array of `photos` files
-  // req.body will contain the text fields, if there were any
-//})
 
 router.get('/',function (req,res){
 	res.send('this is bypass');
 });
 router.post('/',function (req,res){
+	var msg="";
 	upload(req,res,function (err){
 		if(err){
 			console.log(chalk.red("upload failed "+req.body.caption));	
+			msg = err;
 		}
-		console.log(chalk.magenta("found caption "+req.body.caption));
+
+		req.files.forEach(function(entry) {
+		   // console.log(entry);
+		    //console.log(chalk.green("upload success "+(entry).filename+" from ")+(entry).originalname);
+		});
+		var username = req.body.username;
+		var caption = req.body.caption;
+		var profile_image = req.files[1].filename;
+		var content_filename = req.files[0].filename;
+		var email=req.body.email;
+		var content_create_at = req.body.createdAt;
+
+		console.log("content_create_at "+content_create_at);
+
+		var user = new User({
+		  name: username,
+		  username: username,
+		  password: "aaa",
+		  email: username+"@flash_routes.com",
+		  profile_image:profile_image
+		});
+		user.checkExist(function(err,docs){
+			if(err) {
+				console.log('error method');
+			}else if(!docs.length){
+				//console.log(chalk.yellow("register first "));
+				user.save(function (err, product, numAffected) {
+				  if (err) {
+				  		console.log(chalk.red("register failed! "));
+				  }else if(product){
+				  	var content = new Content({
+			            caption : caption,
+			            filename:content_filename,
+			            createdAt:content_create_at+"000",
+			            uid:product._id
+			        });
+			        content.save(function (err, content_data, numAffected) {
+			        	if(err){
+			        		console.log(chalk.red("save content failed! "));
+			        	}else if(content_data){
+			        		console.log(chalk.green("post success "+content_data.post_id));
+			        		console.log(chalk.yellow("numAffected "+numAffected));
+			        	}
+			        });
+				  }// end else if(product){
+				});//end save
+			}else if(docs.length){
+				console.log(chalk.green("upload.. "));
+			}
+			 console.log("dog is ",docs);
+			 console.log("---------");
+		});
+
+		msg = req.body.caption;
+		var data ={
+			result:'done',
+			message:"ba:"+msg
+			}
+		res.json(data);
 	});
 	
 
 
-	var data ={result:'done',
-				message:"ba:"+req.body.caption
-				}
-	res.json(data);
+	
 });
 
 

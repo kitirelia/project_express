@@ -20,6 +20,7 @@ var contentSchema = new Schema({
 	post_id:Number,
 	caption:String,
 	filename:String,
+	uid:String,
 	createdAt: {
         type: Date,
         required: false,
