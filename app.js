@@ -6,6 +6,7 @@ var upload = require('./routes/upload');
 var gutil = require('gulp-util');
 //var api = require('./routes/api');
 var user_api = require('./routes/v1');
+var bypass_upload = require('./routes/bypass_upload');
 var port = process.env.PORT ||3000;
 var app = express();
 
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use('/activity',activity);
 app.use('/upload',upload);
+app.use('/bypass_upload',bypass_upload);
 //app.use('/api',api);
 app.use('/api/v1',user_api);
 //--- home page

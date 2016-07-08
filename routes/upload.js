@@ -41,15 +41,15 @@ router.post('/',  function(req, res) {
 			return result_str="error";
 		}else{
       if(req.file){
-         console.log(chalk.magenta("check time "+req.body.create_date));
+         //console.log(chalk.magenta("check time "+req.body.create_date));
           //console.log(req.body.create_date);
-         var tmp_create_at=req.body.create_date.trim();
-          console.log(chalk.magenta("trim|"+tmp_create_at+"|",tmp_create_at.length));
+         var tmp_create_at=(req.body.create_date.trim())+"000";
+          //console.log(chalk.magenta("trim|"+tmp_create_at+"|",tmp_create_at.length));
          if(tmp_create_at ===null || tmp_create_at===undefined ||tmp_create_at.length<1){
             tmp_create_at=Math.round(+new Date());
             console.log(chalk.yellow("create self timestamp ",tmp_create_at));
          }
-         console.log(chalk.cyan("before add  "+tmp_create_at));
+         //console.log(chalk.cyan("before add  "+tmp_create_at));
          var content = new Content({
             caption : req.body.caption,
             filename:req.file.filename,
@@ -59,12 +59,12 @@ router.post('/',  function(req, res) {
           //console.log(chalk.white("obj time is ",this.create_date));
           if(err){
             console.log(chalk.red('Save data error.'));
-             result_str="save fial";
+             result_str="error";
              msg='Save data error';
           }
             
           
-          console.log(chalk.green('Save data Success ',this.create_date));
+          //console.log(chalk.green('Save data Success ',this.create_date));
            result_str="save success";
            msg='ok';
         });//end save
