@@ -16,6 +16,9 @@ mongoose.connection.on('error', function (err) {
 autoIncrement.initialize(mongoose.connection);
 
 var Schema = mongoose.Schema;
+
+
+
 var contentSchema = new Schema({
 	post_id:Number,
 	caption:String,
@@ -25,12 +28,18 @@ var contentSchema = new Schema({
         type: Date,
         required: false,
         default: Date.now
-     }
+     },
+     tag_arr:[],
+     other_user:[]
 	//create_date:{Date,timestamps: true} 
 });
 contentSchema.plugin(autoIncrement.plugin,{model:'content_data' ,field: 'post_id'});
 contentSchema.set('collection', 'content_data');
 
-var Content = mongoose.model('content_data',contentSchema);
+contentSchema.methods.check_TagExist = function(cb){
+	return 'hey';
+  //return this.model('user_data').find({ username: this.username }, cb);
+};
 
+var Content = mongoose.model('content_data',contentSchema);
 module.exports = Content;
