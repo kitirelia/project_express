@@ -69,8 +69,6 @@ router.post('/',function (req,res){
 				  }// end else if(product){
 				});//end save
 			}else if(docs.length){
-				//console.log('skip register');
-				//console.log("here "+docs.length);
 				var delete_path = " ../../"+image_folder+profile_image;
 				console.log(chalk.magenta("try delete  "+delete_path));
 				fs.exists(delete_path, function(exists) {
