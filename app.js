@@ -3,11 +3,14 @@ var bodyParser = require('body-parser');
 //var multer = require('multer');
 var activity = require('./routes/activity');
 var upload = require('./routes/upload');
+var populate = require('./routes/populate');
 var gutil = require('gulp-util');
 //var api = require('./routes/api');
 var user_api = require('./routes/v1');
 var bypass_upload = require('./routes/bypass_upload');
 var newfeed = require('./routes/newfeed');
+var chalk = require('chalk');
+var mongoose = require('mongoose');
 var port = process.env.PORT ||3000;
 var app = express();
 
@@ -25,6 +28,7 @@ app.use('/bypass_upload',bypass_upload);
 app.use('/newfeed',newfeed);
 //app.use('/api',api);
 app.use('/api/v1',user_api);
+app.use('/populate',populate);
 app.use('/uploads', express.static(__dirname + '/uploads'));
 //app.use(express.static('uploads'));
 //--- home page
@@ -37,6 +41,16 @@ app.get('/feed', function(req, res) {
     res.render('pages/feed');
 });
 
+mongoose.connect('localhost:27017/express_db');
+//mongoose.set('debug', true);
+mongoose.connection.on('open', function (ref) {
+	console.log(chalk.bgGreen('content Connected to mongo server.'));
+});
+
+mongoose.connection.on('error', function (err) {
+ 	console.log(chalk.red('content Error to mongo server.'));
+ 	 console.log(err);
+});
 app.listen(port,function (){
 	console.log(gutil.colors.green('server start...'+port));
 });

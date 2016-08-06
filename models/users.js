@@ -11,14 +11,15 @@ var validateEmail = function(email) {
 var userSchema = new Schema({
   name: { type:String,required: [true,'no Name'], trim:true},
   username: { type: String, required: [true,'no username'], trim:true,unique: true },
-  password: { type: String, trim:true,required:[true,'no password']},
+  password: { type: String, trim:true,required:[true,'no password'], select: false },
   email: { 
     type: String, 
     required: [true,'blank email'],
     unique: true,
     trim:true,
     validate:[validateEmail, 'Please fill a valid email address'],
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
+    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
+    select: false //protect when fetch data
   },
   profile_image:String,
   admin: Boolean,
@@ -36,7 +37,7 @@ var userSchema = new Schema({
 });
 
 userSchema.plugin(uniqueValidator);
-userSchema.set('collection', 'user_data');
+userSchema.set('collection', 'user');
 
 
 userSchema.methods.dudify = function() {
@@ -45,12 +46,12 @@ userSchema.methods.dudify = function() {
 };
 
 userSchema.methods.checkExist = function(cb){
-  return this.model('user_data').find({ username: this.username }, cb);
+  return this.model('user').find({ username: this.username }, cb);
   //var username = this.username;
   //return 'May '+username;
 };
 
-var User = mongoose.model('user_data', userSchema);
+var User = mongoose.model('user', userSchema);
 
 
 //module.exports.myFunc1 = myFunc1;

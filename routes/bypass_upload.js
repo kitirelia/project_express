@@ -58,13 +58,13 @@ router.post('/',function (req,res){
 				console.log('error method');
 				send_resp(req,"Error","check user exist fail");
 			}else if(!docs.length){
-				//console.log(chalk.yellow("register first "));
+				console.log(chalk.yellow("register first "));
 				user.save(function (err, product, numAffected) {
 				  if (err) {
 				  		console.log(chalk.red("register failed! "));
 				  		send_resp(res,"Error","auto resgister fail");
 				  }else if(product){//user exist
-				  //	console.log('register success');
+				  	console.log('register success');
 				  	upload_content(res,caption,content_filename,content_create_at,product._id);
 				  }// end else if(product){
 				});//end save
@@ -90,25 +90,25 @@ router.post('/',function (req,res){
 });// end /post
 
 function upload_content(res,caption,content_filename,content_create_at,uid){
-
+	console.log(chalk.bgYellow('start upload id is '+uid));
 	var tag_Arr=search_tag(caption);
 	var user_arr=search_user(caption);
 	var content = new Content({
 			caption : caption,
 			filename:content_filename,
 			createdAt:content_create_at+"000",
-			uid:uid,
+			owner:uid,
 			tag_arr:tag_Arr,
 			other_user:user_arr
 	});
 	content.save(function (err, content_data, numAffected) {
 		if(err){
-			//console.log(chalk.red("save content failed! "));
+			console.log(chalk.bgRed("save content failed! "+err));
 			send_resp(res,"Error","upload content fail");
 		}else if(content_data){
 			//console.log(chalk.green("post success "+content_data.post_id));
 			//console.log(chalk.yellow("numAffected "+numAffected));
-			//console.log(chalk.bgGreen('content save ! '+content_data.post_id));
+			console.log(chalk.bgGreen('content save ! '+content_data.post_id));
 			update_hashtag_data(tag_Arr);
 			send_resp(res,"Success","upload content success "+content_data.post_id);
 			pair_content_with_tag(content_data.post_id,tag_Arr);
