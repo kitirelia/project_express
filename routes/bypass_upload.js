@@ -106,36 +106,38 @@ function upload_content(res,caption,content_filename,content_create_at,uid){
 			console.log(chalk.bgRed("save content failed! "+err));
 			send_resp(res,"Error","upload content fail");
 		}else if(content_data){
-			//console.log(chalk.green("post success "+content_data.post_id));
+			//console.log(chalk.green("post success "+content_data));
 			//console.log(chalk.yellow("numAffected "+numAffected));
-			console.log(chalk.bgGreen('content save ! '+content_data.post_id));
-			update_hashtag_data(tag_Arr);
-			send_resp(res,"Success","upload content success "+content_data.post_id);
-			pair_content_with_tag(content_data.post_id,tag_Arr);
+			//result_content_id = content_data._id;
+			//console.log('owner '+content.owner)
+			//console.log(chalk.bgGreen('content save ! '+content_data._id));
+			update_hashtag_data(tag_Arr,content.owner,content_data._id);
+			send_resp(res,"Success","upload content success "+content_data._id);
+			//pair_content_with_tag(content_data.post_id,tag_Arr);
 		}
 	});
 }
 
-function pair_content_with_tag(_content_id,arr){
+function pair_content_with_tag(arr){
+	console.log('to pair '+arr);
 	//console.log('get id '+_content_id,arr);
 	var start_index = 0;
-	
-	pair_each(_content_id,arr[start_index]);
-	
-	function pair_each(c_id,tag){
+	pair_each(arr[start_index]);
+	function pair_each(tag_data){
 	//	console.log('call pair  each');
 		var content_tag = new  Content_Tag({
-			content_id :c_id,
-			tag_name : tag
+			content_id :tag_data[2],
+			tag_id: tag_data[0],
+			tag_name : tag_data[1]
 		}); 
 		content_tag.save(function (err,doc, numAffected){
 			if(err){
 				console.log(chalk.red(i,'Error! paring tag content '));
 			}else if(doc){
-				//console.log('paring okay! '+numAffected );
+				//console.log('paring okay! '+doc);
 				start_index++;
 				if(start_index<arr.length){
-					pair_each(_content_id,arr[start_index]);
+					pair_each(arr[start_index]);
 				}
 				else{
 					//console.log(chalk.bgGreen('Paring Done'));
@@ -147,13 +149,14 @@ function pair_content_with_tag(_content_id,arr){
 	
 }
 
-function update_hashtag_data(arr){
+function update_hashtag_data(arr,founder_id,content_id){
 	var start_index = 0;
+	var tag_to_pair=[];
 	save_each_tag(arr[start_index]);
 	function save_each_tag(str){
-		//console.log(chalk.bgCyan('save each  '+str+' save!'));
 		var tag = new Tag({
-			name:str
+			name:str,
+			founder:founder_id
 		});
 		tag.check_TagExist(function (err,doc){
 			if(err){
@@ -164,7 +167,8 @@ function update_hashtag_data(arr){
 				  if (err) {
 				  		console.log(chalk.red("save fail! "));
 				  }else if(product){//user exist
-				  	//console.log(chalk.bgGreen('tag '+str+' save!'));
+				  	//console.log(chalk.bgGreen('tag '+str+' save! id '+product._id,"founder is "+product.founder));
+				  	tag_to_pair.push([product._id,product.name,content_id]);
 				  }// end else if(product){
 				  	start_index++;
 				  	if(start_index<arr.length){
@@ -172,23 +176,26 @@ function update_hashtag_data(arr){
 				  		save_each_tag(arr[start_index]);
 					}else{
 						all_done(null,null);
+						pair_content_with_tag(tag_to_pair);
+						//console.log("before pair");
+						//console.log(tag_to_pair);
 						//console.log(chalk.yellow("done with ",start_index,arr.length));
-						//console.log(chalk.bgGreen('All done'));
-						//console.log(chalk.bgGreen('All done'));
 						//console.log(chalk.bgGreen('All done'));
 					}
 				});//end save
 			}else if(doc.length){
-				//console.log(chalk.bgRed('this tag exist '+str));
+				//console.log(chalk.bgCyan('this tag exist '+str+" id is "+doc[0]));
+				//console.log(chalk.bgRed('this tag exist '+str+" id is "+doc[0]._id,doc[0].name));
+				tag_to_pair.push([doc[0]._id,doc[0].name,content_id]);
 				start_index++;
 				if(start_index<arr.length){
 					//console.log(chalk.yellow("save more ",start_index,arr.length));
 					save_each_tag(arr[start_index]);
 				}else{
 					all_done(null,null);
-					//console.log(chalk.yellow("done with ",start_index,arr.length));
-					//console.log(chalk.bgGreen('All done'));
-					//console.log(chalk.bgGreen('All done'));
+					pair_content_with_tag(tag_to_pair);
+					//console.log("before pair");
+					//	console.log(tag_to_pair);
 					//console.log(chalk.bgGreen('All done'));
 				}
 			}

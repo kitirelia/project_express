@@ -12,7 +12,7 @@ var contentSchema = new Schema({
         required: false,
         default: Date.now
      },
-  tag_arr:[],
+  tag_arr:{type:[],select:false},
   other_user:[]
 });
 contentSchema.set('collection', 'content_data');

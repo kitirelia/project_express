@@ -8,6 +8,7 @@ var gutil = require('gulp-util');
 //var api = require('./routes/api');
 var user_api = require('./routes/v1');
 var bypass_upload = require('./routes/bypass_upload');
+var explore = require('./routes/explore');
 var newfeed = require('./routes/newfeed');
 var chalk = require('chalk');
 var mongoose = require('mongoose');
@@ -30,6 +31,7 @@ app.use('/newfeed',newfeed);
 app.use('/api/v1',user_api);
 app.use('/populate',populate);
 app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use('/explore',explore);
 //app.use(express.static('uploads'));
 //--- home page
 app.get('/',function (req,res){
@@ -41,14 +43,14 @@ app.get('/feed', function(req, res) {
     res.render('pages/feed');
 });
 
-mongoose.connect('localhost:27017/express_db');
+mongoose.connect('127.0.0.1:27017/express_db');
 //mongoose.set('debug', true);
 mongoose.connection.on('open', function (ref) {
 	console.log(chalk.bgGreen('content Connected to mongo server.'));
 });
 
 mongoose.connection.on('error', function (err) {
- 	console.log(chalk.red('content Error to mongo server.'));
+ 	console.log(chalk.red('Error to mongo server.'));
  	 console.log(err);
 });
 app.listen(port,function (){
