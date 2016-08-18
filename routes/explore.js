@@ -76,19 +76,16 @@ router.get('/people/:userName',function (req,res){
 			var found_index =-1;
 			//console.log('get '+doc.length);
 			var image_folder = "/uploads/flash/";
-
-			// for(var i=0;i<doc.length;i++){
-			// 	console.log(i,doc[i].username);
-			// }
-			//console.log('-----------------');
 			var result = {
 				msg:'success',
+				type:'user',
 				user:doc
 			}
 			res.json(result);
 			
 		}else if(doc.length==0){
 			res.json({msg:'notfound',
+				type:'user',
 				user:search_name
 			});
 		}
@@ -149,15 +146,22 @@ router.get('/nav_tags/:tagName',function (req,res){
 					for(var i=0;i<doc.length;i++){
 					console.log(chalk.green('found :'+doc[i]._id,doc[i].post));
 					}
+					var result = {
+						msg:'success',
+						type:'tags',
+						user:doc
+					}
+					res.json(result);
 				}else{
 					console.log(chalk.bgGreen('NOT FOUND'));
+					res.json({msg:'notfound',
+						type:'tags',
+						user:search_tag
+					});
 				}
 				
 			}
 		console.log(chalk.bgCyan('-------------------'));
-	});
-	res.json({msg:'tag_notfound',
-				user:search_tag
 	});
 });
 
