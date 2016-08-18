@@ -31,6 +31,7 @@ app.use('/newfeed',newfeed);
 app.use('/api/v1',user_api);
 app.use('/populate',populate);
 app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use('/public',express.static(__dirname + '/public'));
 app.use('/explore',explore);
 //app.use(express.static('uploads'));
 //--- home page
@@ -38,7 +39,9 @@ app.get('/',function (req,res){
 	res.render('register');
 });
 
-
+app.get('/debug',function(req,res){
+	res.render('view_tag');
+});
 app.get('/feed', function(req, res) {
     res.render('pages/feed');
 });

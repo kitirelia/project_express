@@ -1,0 +1,180 @@
+<script type="text/javascript">
+	var image_folder = "/uploads/flash/";
+	var tag_url ="http://localhost:3000/explore/nav_tags/";
+	var people_url ="http://localhost:3000/explore/people/";
+	$(function(){ // this will be called when the DOM is ready
+		$('#search_txt').keyup(function(e) {
+			   // console.log('Handler for .keyup() called.');
+			var key = e.which;
+			var word = $("#search_txt").val();
+			if(word.charAt(0)=="#"){
+				var tag = word.substring(1,word.length);
+				check_explore_data(true,tag);
+				//console.log('Tag: '+tag);
+			}else{
+				//console.log('user name '+word);
+				check_explore_data(false,word);
+			}
+			if(key == 13)  // the enter key code
+			{
+				console.log('ENTER->navigate to data[0]');
+			    return false;  
+			}//end if ENTER	
+			if(
+				(word.trim()).length==0
+				){
+				$('#search_result_item').find('ul').remove();
+			 //console.log( "get "+key,word);
+			}
+		});
+		$( "#search_txt" )
+			.focusout(function() {
+				//console.log('focus out');
+				$("#search_result").hide();
+			})
+			.focusin(function() {
+				$("#search_result").show();
+				//alert('focus in!');
+			});
+	});//end keyup
+
+	function check_explore_data(isTag,search_str){
+		console.log('start load');
+		search_str = search_str.trim();
+		var req_url="";
+		if(isTag){
+			req_url=tag_url+search_str;
+		}else{
+			req_url=people_url+search_str;
+		}
+		if(search_str.length){
+			var jqxhr = $.get( req_url, function(data) {
+			  //alert( "success" );
+			})
+			.done(function(data) {
+				var test=data.user;
+				console.log(data.msg);
+				var html_str="<ul>";
+				if(data.msg=="success"){
+					for(var i=0;i<test.length;i++){
+						//console.log(i,test[i]);
+						html_str+='<li class="li_bg">';
+						html_str+='   <img class="image_inside_li img-circle" src="'+image_folder+test[i].profile_image+'">'
+						html_str+='		<div>';
+						html_str+='			<div>';
+						html_str+='				'+test[i].username;
+						html_str+='			</div>';
+						html_str+='			<div>';
+						html_str+='				'+test[i].name;;
+						html_str+='			</div>';
+						html_str+='		</div>';
+						html_str+='</li>';
+					}
+				}//end ifdata.msg=="success"
+				else{
+					//console.log('man '+test)
+					html_str+='<li class="li_bg">';
+					//	html_str+='   <img class="image_inside_li img-circle" src="'+image_folder+test[i].profile_image+'">'
+						html_str+='		<div>';
+						html_str+='			<div class="force_text_center">';
+						html_str+='				Not found';
+						html_str+='			</div>';
+						html_str+='			<div class="force_text_center">';
+						html_str+='				'+test;
+						html_str+='			</div>';
+						html_str+='		</div>';
+						html_str+='</li>';
+				}
+				html_str+="</ul>";
+				$('#search_result_item').find('ul').remove();
+				$( "#search_result_item" ).append(html_str);
+				//$( "#search_result_item" ).html(html_str);
+			})
+			.fail(function(data) {
+				console.log( "error" );
+			});
+		}
+	}
+
+</script>
+<style type="text/css">
+	.force_text_center{
+		text-align: center;
+	}
+	.left_bg{
+		background-color: #A4A4A4;
+	}
+	.center_bg{
+		background-color: #F7D358;
+	}
+	.right_bg{
+		background-color: #D0FA58;
+	}
+	.inside_center_bg{
+		/*background-color: red;*/
+		z-index: 100;
+		position: absolute;
+		width: 100%;
+	}
+	.inside_center_bg ul {
+		width: 80%;
+		max-width: 460px;
+		max-height: 240px; overflow: auto;
+		background-color: #D0FA58;
+		list-style: none;
+		padding: 0px;
+		margin: 0 auto;
+		margin-top: -10px;
+		border: solid 1px #dbdbdb;
+		box-shadow: 0 0 5px rgba(0,0,0,.13);
+		border-radius: 3px;
+	}
+	.li_bg{
+		max-width: 460px;
+		background-color: #FBFBEF;
+		padding-right: 10px;
+		padding-left: 10px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		border-bottom: solid 1px #dbdbdb;
+	}
+	.image_inside_li{
+		width: 32px;
+		height: 32px;
+		float: left;
+	}
+</style>
+<nav class='nav_bg '>
+			<div class='row nav_space'>
+				<div class="col-md-4 left_col_bg ">
+					<div class="nav_link_menu ">
+ 						<a href="#" >Home</a>
+ 					</div>
+				</div> <!-- end left col -->
+  				<div class="col-md-4 center_col_bg">
+  					<div class="inner-addon left-addon fix_input_width">
+					    <i class="glyphicon glyphicon-search"></i>
+					    <input type="text" id='search_txt' class="form-control input-sm " placeholder="Search">
+					</div>
+				  	
+  				</div> <!-- end center col -->
+ 				<div class="col-md-4 right_col_bg">
+ 					<div class="nav_link_menu">
+ 						<a href="#" >LogIn</a>
+ 					</div>
+ 				</div> <!-- end right col -->
+			</div> <!-- end class row -->
+</nav>
+
+<div class="row" id='search_result'>
+	<div class="col-md-4 left_bg"></div> <!-- end right offset -->
+	<div class="col-md-4 center_bg"> 
+		<div class="inside_center_bg" id='search_result_item'> <!-- bg red -->
+				
+		</div> <!-- end inside_center_bg -->
+	</div> <!-- end col-md-4 center_bg -->
+	<div class="col-md-4 right_bg"></div> <!-- end left offset -->
+</div>
+<!-- <div id='result_data'>
+	resul
+</div> -->

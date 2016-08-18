@@ -31,7 +31,8 @@ var userSchema = new Schema({
   created_at: {
         type: Date,
         required: false,
-        default: Date.now
+        default: Date.now,
+        select:false
      },
   updated_at: Date
 });

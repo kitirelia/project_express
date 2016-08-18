@@ -119,7 +119,7 @@ function upload_content(res,caption,content_filename,content_create_at,uid){
 }
 
 function pair_content_with_tag(arr){
-	console.log('to pair '+arr);
+	//console.log('to pair '+arr);
 	//console.log('get id '+_content_id,arr);
 	var start_index = 0;
 	pair_each(arr[start_index]);
@@ -232,8 +232,8 @@ function all_done(data,response){
 	if(current_progress==all_progress){
 		console.log(chalk.bgGreen('All done resp here'));
 		res.json(cache_resp);
-		console.log('res is '+res,cache_resp);
-		console.log("debug "+cache_resp.result);
+		//console.log('res is '+res,cache_resp);
+		//console.log("debug "+cache_resp.result);
 	}
 }
 

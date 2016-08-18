@@ -1,31 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-	<meta charset="UTF-8">
+<title>Title of the document</title>
+<meta charset="UTF-8">
 	<script type="text/javascript" src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
 	<script type="text/javascript">
+	//var data = JSON.stringify(data);
 		$( document ).ready(function() {
 			//console.log('doc ready '+image_folder);
+			
+			if(typeof data != "undefined"){
+				//alert('get data');
+			}else{
+				console.log('no data');
+			}
 			$('#content').append(data);
 		});
 
 	</script>
+
 </head>
+
 <body>
-	<h1>new feed</h1>	
+	<h1>All User</h1>	
 	<% if (typeof data != "undefined") { %>
         <script type="text/javascript">
             var data = <%-JSON.stringify(data)%>;
-
-           
+            var xall_user = data.all_user;
+            data = data.html;
+           //  console.log();
         </script>
-        <h1>found </h1>
+        <h1>found <%- data.all_user %> user(s)</h1>
         <% } else{ %>
         <h1>bar</h1>
     <% } %>
-    <div id='content'>
-    	
-
-    </div>
+	<div id='content'></div>
 </body>
+
 </html>
