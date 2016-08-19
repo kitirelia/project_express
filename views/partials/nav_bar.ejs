@@ -2,22 +2,22 @@
 	var image_folder = "/uploads/flash/";
 	var tag_url ="http://localhost:3000/explore/nav_tags/";
 	var people_url ="http://localhost:3000/explore/people/";
+	//var base_url="";
+	var navigate_page="";
 	$(function(){ // this will be called when the DOM is ready
 		$('#search_txt').keyup(function(e) {
-			   // console.log('Handler for .keyup() called.');
 			var key = e.which;
 			var word = $("#search_txt").val();
-			if(word.charAt(0)=="#"){
+			if(word.charAt(0)=="#" && key != 13){
 				var tag = word.substring(1,word.length);
 				check_explore_data(true,tag);
-				//console.log('Tag: '+tag);
 			}else{
-				//console.log('user name '+word);
-				check_explore_data(false,word);
+				if(key != 13)check_explore_data(false,word);
 			}
 			if(key == 13)  // the enter key code
 			{
-				console.log('ENTER->navigate to data[0]');
+				//console.log('ENTER->navigate to data[0]');
+			    navigate_first_node();
 			    return false;  
 			}//end if ENTER	
 			if(
@@ -30,7 +30,7 @@
 		$( "#search_txt" )
 			.focusout(function() {
 				//console.log('focus out');
-				$("#search_result").hide();
+				//$("#search_result").hide();
 			})
 			.focusin(function() {
 				$("#search_result").show();
@@ -53,37 +53,57 @@
 			})
 			.done(function(data) {
 				var test=data.user;
-				console.log(data.msg);
+				//console.log(data.msg);
 				var html_str="<ul>";
 				if(data.msg=="success"){
+					if(data.type=='user'){
+						navigate_page=people_url;
+						navigate_page+=test[0].username;
+					}else if(data.type!='user'){
+						navigate_page="http://localhost:3000/explore/tags/";
+						navigate_page+=test[0]._id;
+					}
+					//console.log('debug '+navigate_page);
 					for(var i=0;i<test.length;i++){
 						var left_content="";
 						var top_right_content="";
+						var click_url="";
 						var bottom_right_content="";
 						if(data.type=='user'){
 							left_content ='   <img class="image_inside_li img-circle" src="'+image_folder+test[i].profile_image+'">';
 							top_right_content = test[i].username;
 							bottom_right_content = test[i].name;
+							click_url=people_url+test[i].username;
 						}else{
 							left_content ='<h3>#</h3>';
 							top_right_content=test[i]._id;
 							bottom_right_content=test[i].post+" post";
+							click_url="http://localhost:3000/explore/tags/"+test[i]._id;
+
 						}
 
 						html_str+='<li class="li_bg">';
+						//html_str+= '<a class="a_no_dec" href="#">';
+						html_str+= '<a class="a_no_dec" href="'+click_url+'">';
+						html_str+='<div class="row">';	//start row
+						html_str+='<div class="col-md-2" style="text-align: center;">';
 						html_str+=	left_content;
-						html_str+='		<div>';
-						html_str+='			<div>';
+						html_str+='</div>';//end left content
+						html_str+='		<div class="col-md-10 remove_cursor">';
+						html_str+='			<div class="dec_username">';
 						html_str+='				'+top_right_content;
 						html_str+='			</div>';
-						html_str+='			<div>';
+						html_str+='			<div class="dec_detail_name">';
 						html_str+='				'+bottom_right_content;
 						html_str+='			</div>';
 						html_str+='		</div>';
+						html_str+='</div>' //end row
+						html_str+='</a>';
 						html_str+='</li>';
 					}
 				}//end ifdata.msg=="success"
-				else{
+				else{ // NOT FOUND
+					navigate_page="";
 					//console.log('man '+test)
 					html_str+='<li class="li_bg">';
 					//	html_str+='   <img class="image_inside_li img-circle" src="'+image_folder+test[i].profile_image+'">'
@@ -103,9 +123,22 @@
 				//$( "#search_result_item" ).html(html_str);
 			})
 			.fail(function(data) {
+				navigate_page="";
 				console.log( "error" );
 			});
 		}
+	}//end check_explore_data
+	function navigate_first_node(){
+		var check_txt = $("#search_txt").val().trim();
+		check_txt = check_txt.replace("#", "");
+		//var res = str.
+		if(navigate_page.trim().length>0 &&
+		 (check_txt.length>0)) 
+		{
+			console.log('nav here '+navigate_page);
+			window.location.href = navigate_page;
+			//console.log('focusing '+($("#search_txt").is(":focus")));
+		}	
 	}
 
 </script>
@@ -130,9 +163,10 @@
 	}
 	.inside_center_bg ul {
 		width: 80%;
-		max-width: 460px;
+		max-width: 440px;
 		max-height: 240px; overflow: auto;
-		background-color: #D0FA58;
+		/*background-color: #D0FA58;*/
+		background-color: red;
 		list-style: none;
 		padding: 0px;
 		margin: 0 auto;
@@ -140,6 +174,7 @@
 		border: solid 1px #dbdbdb;
 		box-shadow: 0 0 5px rgba(0,0,0,.13);
 		border-radius: 3px;
+		overflow-x: hidden;
 	}
 	.li_bg{
 		max-width: 460px;
@@ -153,7 +188,24 @@
 	.image_inside_li{
 		width: 32px;
 		height: 32px;
-		float: left;
+
+	}
+	.remove_cursor{
+		/*cursor:default;
+*/	}
+	.a_no_dec{
+		color: #003569;
+		text-decoration: none;
+		z-index: 1011;
+	}
+	.dec_username{
+		color: #262626;
+		font-weight: 400;
+		text-overflow: ellipsis;
+	}
+	.dec_detail_name{
+		color: #999;
+		font-weight: 300;
 	}
 </style>
 <nav class='nav_bg '>

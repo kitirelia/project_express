@@ -40,7 +40,9 @@ app.get('/',function (req,res){
 });
 
 app.get('/debug',function(req,res){
-	res.render('view_tag');
+	//res.render('view_tag');
+	res.status(404)        // HTTP status 404: NotFound
+   .send('Not found');
 });
 app.get('/feed', function(req, res) {
     res.render('pages/feed');

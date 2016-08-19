@@ -39,8 +39,6 @@ router.get('/all_user',function (req,res){
 		if(err){
 			res.json({result:'error',msg:'error '+err});
 		}else if(result){
-			//res.json(result);
-			//res.render('view_all_user',{data:html_str});
 			var image_folder = "/uploads/flash/";
 			var html_str="";
 			for(var i=0;i<result.length;i++){
@@ -116,7 +114,7 @@ function show_personal_page(uid){
 ///////////////////////////////////////////////////
 router.get('/nav_tags/:tagName',function (req,res){
 	var search_tag = (req.params.tagName).trim();
-	console.log(chalk.magenta('search # '+search_tag));
+	//console.log(chalk.magenta('search # '+search_tag));
 	Content_Tag
 		.aggregate([
 	    { 
@@ -144,7 +142,7 @@ router.get('/nav_tags/:tagName',function (req,res){
 			}else{
 				if(doc.length){
 					for(var i=0;i<doc.length;i++){
-					console.log(chalk.green('found :'+doc[i]._id,doc[i].post));
+					//console.log(chalk.green('found :'+doc[i]._id,doc[i].post));
 					}
 					var result = {
 						msg:'success',
@@ -161,12 +159,13 @@ router.get('/nav_tags/:tagName',function (req,res){
 				}
 				
 			}
-		console.log(chalk.bgCyan('-------------------'));
+		//console.log(chalk.bgCyan('-------------------'));
 	});
 });
 
 
 router.get('/tags/:tagName',function (req,res){
+	console.log('get req '+req.params.tagName);
 	var requrl = url.format({
 	    protocol: req.protocol,
 	    host: req.get('host'),
@@ -187,7 +186,14 @@ router.get('/tags/:tagName',function (req,res){
 			Content
 		    .find({'_id':{$in:id_arr}})
 		    .sort({'createdAt':-1})
-		    .populate({path:'owner'})
+		    .populate(
+		    	{
+		    		path:'owner',
+		    		options: { 
+		    			limit: 5 
+		    		}//end option
+		    	}
+		    )
 		    .exec(function(err, doc) {
 		      if (err){
 		      	console.log(chalk.red('Error'+err));
@@ -196,25 +202,42 @@ router.get('/tags/:tagName',function (req,res){
 				});
 		      }
 		      if (doc){
-		      	//console.log(chalk.green("get doc "+doc.length));
+		      	console.log(chalk.green("get doc "+doc.length));
 		      	var image_folder = "/uploads/flash/";
 		      	var html_str="";
 		      	for(var i=0;i<doc.length;i++){
+		      		//console.log(doc[i]);
+		      		doc[i].caption=hili_tag(doc[i].caption,clean_path);
+		      		doc[i].filename=image_folder+doc[i].filename;
+		      		//doc[i]
+		      		//console.log(doc[i].caption);
 		      		//console.log(chalk.yellow("-------"+i+"-------"));
 		      		
-		      		html_str+="<div>";
-		      		html_str+="<h3>"+doc[i].owner.username+"<h3>";
-  			 		html_str+='<img src="'+image_folder+doc[i].filename+'" alt="Smiley face" height="100" width="100">';
-  			 		html_str+='<img src="'+image_folder+doc[i].owner.profile_image+'" alt="profile" height="50" width="50">';
-  			 		html_str+="<div>";
-  			 		html_str+=hili_tag(doc[i].caption,clean_path);
-  			 		html_str+="<h1>"+readable_time(doc[i].createdAt)+"</h1>";
-  			 		html_str+="</div>";
-  			 		html_str+="</div>";
+		      // 		html_str+="<div>";
+		      // 		html_str+="<h3>"+doc[i].owner.username+"<h3>";
+  			 		// html_str+='<img src="'+image_folder+doc[i].filename+'" alt="Smiley face" height="100" width="100">';
+  			 		// html_str+='<img src="'+image_folder+doc[i].owner.profile_image+'" alt="profile" height="50" width="50">';
+  			 		// html_str+="<div>";
+  			 		// html_str+=hili_tag(doc[i].caption,clean_path);
+  			 		// html_str+="<h1>"+readable_time(doc[i].createdAt)+"</h1>";
+  			 		// html_str+="</div>";
+  			 		// html_str+="</div>";
 
 
 		      	}///end for
-		      	res.render('view_newfeed',{data:html_str});
+		       	var result = {
+					 	msg:'success',
+					 	hashtag_name:req.params.tagName,
+					 	all_post:doc.length,
+					 	data:doc
+				 }
+					//res.json(result);
+		      	res.render('view_tag',{
+					 	msg:'success',
+					 	hashtag_name:req.params.tagName,
+					 	all_post:doc.length,
+					 	data:doc
+				 });
 		      }//end if
 		    });//end Content.find({'_id':{$in:id_arr}})
 		}
@@ -227,7 +250,7 @@ router.get('/tags/:tagName',function (req,res){
 ///////////////////////////////////////////////////
 
 function hili_tag(str,url){
-			var html_str="<div class='space'>";
+			var html_str="";
 			var found=false;
 			var buffering =false;
 			var buffer_text="";
@@ -273,7 +296,7 @@ function hili_tag(str,url){
 				}
 			}
 			//console.log(html_str);
-			return html_str+'</div>';
+			return html_str;
 }//end hilitag
 function readable_time(UNIX_timestamp) {
 			var now =new Date();
