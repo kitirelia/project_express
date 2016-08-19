@@ -45,9 +45,10 @@ router.post('/',function (req,res){
 		var content_filename = req.files[0].filename;
 		var email=req.body.email;
 		var content_create_at = req.body.createdAt;
-
+		var full_name = req.body.fullname;
+		console.log('debug ',"user "+username);
 		var user = new User({
-		  name: username,
+		  name: full_name,
 		  username: username,
 		  password: "aaa",
 		  email: username+"@flash_routes.com",
@@ -61,7 +62,7 @@ router.post('/',function (req,res){
 				console.log(chalk.yellow("register first "));
 				user.save(function (err, product, numAffected) {
 				  if (err) {
-				  		console.log(chalk.red("register failed! "));
+				  		console.log(chalk.red("register failed! "+err));
 				  		send_resp(res,"Error","auto resgister fail");
 				  }else if(product){//user exist
 				  	console.log('register success');

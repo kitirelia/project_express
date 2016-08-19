@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script   src="https://code.jquery.com/jquery-1.12.4.js"   integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="   crossorigin="anonymous"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<% include ../partials/header_person_view %>
+	<title>New User View</title>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('img').on('load', function() {
+				//console.log("id "+$(this).attr('id'));
+				if(typeof $(this).attr('id') != 'undefined'){
+			    	if(($(this).attr('id').indexOf('hash_img'))>=0  ){
+				    	if($(this).width()>$(this).height()){
+				    		$(this).addClass( "crop_for_h  " );
+				    	}else{
+				    		$(this).addClass( "crop_for_v " );
+				    	}
+			    	}
+		    	}
+			});//end load
+			
+		
+		});//end doc ready
+
+	</script>
+	<style type="text/css">
+		.offset_bg{
+			background-color: #E1F5A9;
+		}
+		.content_tag_bg{
+			background-color: #F7D358;
+		}
+		.about_user_bg{
+			background-color: #D8CEF6;
+		}
+		.image_debug_bg{
+			background-color: #2E64FE;
+		}
+		.jonat-thumbnail {
+			float: left;
+			position: relative;
+			overflow: hidden;
+		}
+		.img_size_preview{
+			width: 275px;
+			height:	275px;
+			margin:10px;
+		}
+		.crop_for_h {
+			/*position: absolute;*/
+			position: relative;
+			left: 50%;
+			top: 50%;
+			height: 100%;
+			width: auto;
+			-webkit-transform: translate(-50%,-50%);
+			-ms-transform: translate(-50%,-50%);
+			transform: translate(-50%,-50%);
+		}
+		.crop_for_v {
+			/*position: absolute;*/
+			position: relative;
+			left: 50%;
+			top: 50%;
+			height: auto;
+			width: 100%;
+			-webkit-transform: translate(-50%,-50%);
+			-ms-transform: translate(-50%,-50%);
+			transform: translate(-50%,-50%);
+		}
+	</style>
+</head>
+<body class="bg_main">
+	<% include ../partials/nav_bar %>
+	<div id='debug_container'>
+		<div class="row">
+			<div class="col-md-2 offset_bg">.col-md-2</div>
+  			<div class="col-md-8 content_tag_bg">
+  				<div class="about_user_bg">
+  					<div class='row'>
+  						<div class="col-md-2">
+							<img src="<%= profile_img  %>"  alt="profile image" height="150px" width="150px">
+						</div> <!-- end div-img-col-md-2 -->
+						<div class="col-md-8">
+							<div id='user_name'>
+	 							<div>
+	 								<h1><%= user_name %></h1>
+	 							</div>
+	 							<div>
+	 								<%= nickname %>
+	 							</div>
+	 						</div>  <!-- end id user_name -->
+	 						<div id='about_user'>
+	 							<div id='user_status' class="row">
+	 								<div class="col-md-4"><%= all_post %> posts</div>
+	  								<div class="col-md-4">Follower</div>
+	  								<div class="col-md-4">Following</div>
+	 							</div> <!-- end div user_status -->
+	 						</div> <!-- end id  about_user -->
+						</div> <!-- end col-md-8 -->
+						<div class="col-md-2">
+
+						</div> <!-- end md-2 right offset -->
+  					</div>  <!-- end class row -->
+  				</div> <!-- end about_user_bg -->
+  				<div class="image_debug_bg">
+  					<% for(var i=0; i<data.length; i++) { %>
+				        <div class='jonat-thumbnail img_size_preview'>
+							<img  id='hash_img"<%= i %>"' src="<%= data[i].filename %>" >
+						</div>
+				    <% } %>
+  					<!-- <?php
+						for($i=0;$i<15;$i++){
+							echo "<div class='jonat-thumbnail img_size_preview'>";
+							echo "<img  id='hash_img".$i."' src='img/pic".$i.".jpg' >";
+							echo "</div>";
+						}
+					?> -->
+  				</div>
+  			</div>
+  			<div class="col-md-2 offset_bg">.col-md-2</div>
+		</div> <!-- end class row -->
+	</div>
+</body>
+</html>

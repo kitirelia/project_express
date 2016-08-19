@@ -47,6 +47,7 @@ router.get('/all_user',function (req,res){
 				html_str+=	"<div>";
 				html_str+=	"<p>"+result[i]._id+"</p>";
 				html_str+=	"<p>"+result[i].username+"</p>";
+				html_str+=	"<p>"+result[i].name+"</p>";
 				html_str+=	"</div>";
 				html_str+="</div>";
 			}
@@ -88,11 +89,64 @@ router.get('/people/:userName',function (req,res){
 			});
 		}
 	});
-	//search_name
-	
+	//search_name	
+});
+
+router.get('/person/:userName',function (req,res){
+	var search_name = (req.params.userName).replace(/\s/g, "") ;
+	User
+	.findOne({'username':search_name},function (err,doc){
+		if(err){
+			console.log(chalk.red("findOne Error "+err));
+		}else{
+			if(doc){
+				var profile_picture="";
+				var image_folder = "/uploads/flash/";
+				profile_picture = image_folder+doc.profile_image;
+				var nick_name= doc.name;
+				console.log(chalk.bgCyan(doc._id,profile_picture));
+				Content
+				.find({'owner':doc._id})
+				.populate({path:'owner'})
+				.exec(function (err,result){
+					if(err){
+						console.log(chalk.red('populate content err '+err));
+					}else if(result){
+						//var all_post=result.length;
+						//console.log('post '+all_post);
+						for(var i=0;i<result.length;i++){
+							//console.log(result[i]);
+							//console.log(result[i].owner.username);
+							result[i].filename=image_folder+result[i].filename;
+						}
+
+						console.log(chalk.cyan('--------------------'));
+						res.render('view_person',{
+					 	msg:'success',
+					 	profile_img:profile_picture,
+					 	user_name:search_name,
+					 	all_post:result.length,
+					 	nickname:nick_name,
+					 	data:result
+				 });
+					}
+				});
+				
+			}else{
+				res.json({msg:'notfound',
+						type:'tags',
+						user:search_tag
+				});
+				console.log(chalk.bgRed("User Not found"));
+			}
+			
+		}
+	});
+	//
 });
 
 function show_personal_page(uid){
+	console.log('-------------- search person')
 	Content
 	.find({'owner':uid})
 	.populate({path:'owner'})
@@ -209,21 +263,6 @@ router.get('/tags/:tagName',function (req,res){
 		      		//console.log(doc[i]);
 		      		doc[i].caption=hili_tag(doc[i].caption,clean_path);
 		      		doc[i].filename=image_folder+doc[i].filename;
-		      		//doc[i]
-		      		//console.log(doc[i].caption);
-		      		//console.log(chalk.yellow("-------"+i+"-------"));
-		      		
-		      // 		html_str+="<div>";
-		      // 		html_str+="<h3>"+doc[i].owner.username+"<h3>";
-  			 		// html_str+='<img src="'+image_folder+doc[i].filename+'" alt="Smiley face" height="100" width="100">';
-  			 		// html_str+='<img src="'+image_folder+doc[i].owner.profile_image+'" alt="profile" height="50" width="50">';
-  			 		// html_str+="<div>";
-  			 		// html_str+=hili_tag(doc[i].caption,clean_path);
-  			 		// html_str+="<h1>"+readable_time(doc[i].createdAt)+"</h1>";
-  			 		// html_str+="</div>";
-  			 		// html_str+="</div>";
-
-
 		      	}///end for
 		       	var result = {
 					 	msg:'success',
