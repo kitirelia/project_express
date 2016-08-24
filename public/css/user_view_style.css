@@ -1,6 +1,18 @@
 .bg_main{
 			background-color: #fafafa;
+}
+.content_tag_bg{
+			background-color: #F7D358;
+}
+.image_debug_bg{
+			background-color: #2E64FE;
+}
+.about_user_bg{
+			background-color: #D8CEF6;
 		}
+.offset_bg{
+			background-color: #E1F5A9;
+}
 		.nav_bg{
 			background-color: #81BEF7;
 		}
@@ -16,7 +28,6 @@
 			margin-bottom: 20px;
 		}
 		.crop_for_h {
-			/*position: absolute;*/
 			position: relative;
 			left: 50%;
 			top: 50%;
@@ -27,7 +38,6 @@
 			transform: translate(-50%,-50%);
 		}
 		.crop_for_v {
-			/*position: absolute;*/
 			position: relative;
 			left: 50%;
 			top: 50%;
@@ -40,16 +50,13 @@
 		
 		.jonat-thumbnail {
 			float: left;
-		  position: relative;
-		  
-		 /* background-color: black;*/
-		  overflow: hidden;
-		  /*margin:10px;*/
+			position: relative;
+			overflow: hidden;
 		}
 		.img_size_preview{
-			width: 305px;
-			height:	305px;
-			margin:15px;
+			width: 275px;
+			height:	275px;
+			margin:10px;
 		}
 		.debug_container{
 			background-color: #F6CEF5;

@@ -34,12 +34,11 @@
 			})
 			.focusin(function() {
 				$("#search_result").show();
-				//alert('focus in!');
 			});
 	});//end keyup
 
 	function check_explore_data(isTag,search_str){
-		console.log('start load');
+		//console.log('start load');
 		search_str = search_str.trim();
 		var req_url="";
 		if(isTag){

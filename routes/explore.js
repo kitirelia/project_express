@@ -93,6 +93,38 @@ router.get('/people/:userName',function (req,res){
 });
 
 router.get('/person/:userName',function (req,res){
+	var requrl = url.format({
+	    protocol: req.protocol,
+	    host: req.get('host'),
+	    pathname: req.originalUrl,
+	});
+
+	var base_url = requrl;
+	var check_index=base_url.indexOf(req.params.userName);
+	var other_tag_path = base_url.substring(0,(check_index));
+	base_url=base_url.substring(0,(check_index+req.params.userName.length))+"/";
+  	var next_url=base_url;
+	var max_id = 0;
+	var num_limit =15;
+	var start_index=0;
+	var next_url=base_url;
+	if(req.query.limit){
+		num_limit = Number(req.query.limit);
+		//console.log(chalk.green("get max_id: "+num_limit));
+	}
+	if(req.query.start_index){
+		start_index = Number(req.query.start_index);
+		//console.log(chalk.green("start index: "+start_index));
+	}
+	if(req.query.max_id){
+		//console.log(chalk.yellow('get '+req.query.max_id));
+		max_id = Number(req.query.max_id);
+		max_id=max_id+=1;
+		next_url = next_url+"?max_id="+max_id;
+	}else if(!req.query.max_id){
+		next_url = next_url+"?max_id=0";
+	}
+	//console.log("next ulr "+next_url);
 	var search_name = (req.params.userName).replace(/\s/g, "") ;
 	User
 	.findOne({'username':search_name},function (err,doc){
@@ -100,38 +132,77 @@ router.get('/person/:userName',function (req,res){
 			console.log(chalk.red("findOne Error "+err));
 		}else{
 			if(doc){
+				//console.log(doc);
+				//var all_tag_post = doc.length;
+				
 				var profile_picture="";
 				var image_folder = "/uploads/flash/";
 				profile_picture = image_folder+doc.profile_image;
 				var nick_name= doc.name;
-				console.log(chalk.bgCyan(doc._id,profile_picture));
+				var all_tag_post  =0;
 				Content
 				.find({'owner':doc._id})
 				.populate({path:'owner'})
-				.exec(function (err,result){
+				.exec(function (err,all_content){
 					if(err){
-						console.log(chalk.red('populate content err '+err));
-					}else if(result){
-						//var all_post=result.length;
-						//console.log('post '+all_post);
-						for(var i=0;i<result.length;i++){
-							//console.log(result[i]);
-							//console.log(result[i].owner.username);
-							result[i].filename=image_folder+result[i].filename;
-						}
-
-						console.log(chalk.cyan('--------------------'));
-						res.render('view_person',{
-					 	msg:'success',
-					 	profile_img:profile_picture,
-					 	user_name:search_name,
-					 	all_post:result.length,
-					 	nickname:nick_name,
-					 	data:result
-				 });
-					}
+						console.log(chalk.red('cannot count '+err));
+					}else{
+						all_tag_post = all_content.length;
+					//	console.log('all post of '+req.params.userName+" totals "+all_tag_post);
+						Content
+						.find({'owner':doc._id})
+						.populate({path:'owner'})
+						//.limit(15)
+						.skip(max_id*num_limit)
+		    			.limit(num_limit)
+						.exec(function (err,result){
+							if(err){
+								console.log(chalk.red('populate content err '+err));
+							}else if(result){
+								for(var i=0;i<result.length;i++){
+									result[i].filename=image_folder+result[i].filename;
+								}
+								var has_next_page=false;
+								var current_doc  = all_tag_post-((max_id*num_limit)+num_limit);
+						      	//console.log('all_tag_post '+all_tag_post,"skip ",(max_id*num_limit)," current_doc "+current_doc," doc "+doc.length);
+						      	if(current_doc>0){
+						      		has_next_page=true;
+						      	}else if(current_doc<=0){
+						      		has_next_page=false;
+						      	}
+								console.log(chalk.cyan('-------------------- '+has_next_page));
+								if(req.query.max_id){
+									res.json({
+										 msg:'success',
+									 	profile_img:profile_picture,
+									 	user_name:search_name,
+									 	all_post:all_tag_post,
+									 	followers:0,
+									 	following:0,
+									 	nickname:nick_name,
+									 	has_next:has_next_page,
+									 	next_page:next_url,
+									 	data:result
+									 });
+								}//end if(req.query.max_id)
+								else if(!req.query.max_id){
+									res.render('view_person',{
+									 	msg:'success',
+									 	profile_img:profile_picture,
+									 	user_name:search_name,
+									 	all_post:all_tag_post,
+									 	followers:0,
+									 	following:0,
+									 	nickname:nick_name,
+									 	has_next:has_next_page,
+									 	next_page:next_url,
+									 	data:result
+								 		});
+									}//end !req.query.max_id
+								}//end else if(!req.query.max_id)
+						});
+					}//end count content
 				});
-				
 			}else{
 				res.json({msg:'notfound',
 						type:'tags',
@@ -146,26 +217,125 @@ router.get('/person/:userName',function (req,res){
 });
 
 function show_personal_page(uid){
-	console.log('-------------- search person')
-	Content
-	.find({'owner':uid})
-	.populate({path:'owner'})
-	.exec(function (err,doc){
-		if(err){
-			console.log(chalk.red('populate content err '+err));
-		}else if(doc){
-			for(var i=0;i<doc.length;i++){
-				console.log(doc[i].owner.username);
-			}
-			console.log(chalk.cyan('--------------------'));
-		}
-	});
+	 console.log('-------------- show_personal_page');
 }
 
 
 ///////////////////////////////////////////////////
 ///////////////// tags/tagName  ///////////////////
 ///////////////////////////////////////////////////
+
+router.get('/tags/:tagName',function (req,res){
+	var requrl = url.format({
+	    protocol: req.protocol,
+	    host: req.get('host'),
+	    pathname: req.originalUrl,
+	});
+	var base_url = requrl;
+	var check_index=base_url.indexOf(req.params.tagName);
+	var other_tag_path = base_url.substring(0,(check_index));
+	base_url=base_url.substring(0,(check_index+req.params.tagName.length))+"/";
+  	var next_url=base_url;
+	var max_id = 0;
+	var num_limit =15;
+	var start_index=0;
+	if(req.query.limit){
+		num_limit = Number(req.query.limit);
+		//console.log(chalk.green("get max_id: "+num_limit));
+	}
+	if(req.query.start_index){
+		start_index = Number(req.query.start_index);
+		//console.log(chalk.green("start index: "+start_index));
+	}
+	if(req.query.max_id){
+		//console.log(chalk.yellow('get '+req.query.max_id));
+		max_id = Number(req.query.max_id);
+		max_id=max_id+=1;
+		//console.log(chalk.bgYellow('set '+max_id));
+		next_url = next_url+"?max_id="+max_id;
+		//console.log(chalk.cyan('JSON '+next_url));
+	}else if(!req.query.max_id){
+		next_url = next_url+"?max_id=0";
+		//console.log(chalk.red('-------render page'));
+	}
+	
+	//console.log(base_url,'==',other_tag_path);
+	console.log(chalk.yellow('max_id ',max_id," num_limit "+num_limit,' skip '+(max_id*num_limit)));
+	Content_Tag.find({tag_name:req.params.tagName}, function (err,result) {
+		if(err) {
+			res.json({res:'Error'+err,
+				data:[]
+			});
+		}else if(result){
+			var id_arr = [];
+			for(var i=0;i<result.length;i++){
+	   			id_arr.push(mongoose.Types.ObjectId(result[i].content_id)); 
+	   		}
+	   		var all_tag_post = result.length;
+			Content
+		    .find({'_id':{$in:id_arr}})
+		    .skip(max_id*num_limit)
+		    .limit(num_limit)
+		    .sort({'createdAt':-1})
+		    .populate(
+		    	{
+		    		path:'owner'
+		    	}
+		    )
+		    .exec(function(err, doc) {
+		      if (err){
+		      	console.log(chalk.red('Error'+err));
+		      	res.json({res:'Error'+err,
+					data:[]
+				});
+		      }
+		      if (doc){
+		      	var has_next_page =false;
+		      	var current_doc  = all_tag_post-((max_id*num_limit)+num_limit);
+		      	//console.log('all_tag_post '+all_tag_post,"skip ",(max_id*num_limit)," current_doc "+current_doc," doc "+doc.length);
+		      	if(current_doc>0){
+		      		has_next_page=true;
+		      	}else if(current_doc<=0){
+		      		has_next_page=false;
+		      	}
+		      	//console.log(chalk.green(req.params.tagName," get doc: "+doc.length," has next "+has_next_page));
+		      	//console.log(chalk.green(" -------------- "));
+		      	var image_folder = "/uploads/flash/";
+		      	var html_str="";
+		      	for(var i=0;i<doc.length;i++){
+		      		//console.log(doc[i]);
+		      		doc[i].caption=hili_tag(doc[i].caption,other_tag_path);
+		      		doc[i].filename=image_folder+doc[i].filename;
+		      	}///end for
+
+					//res.json(result);
+				if(req.query.max_id){
+					res.json({
+						 	msg:'success',
+						 	hashtag_name:req.params.tagName,
+						 	all_post:all_tag_post,
+						 	next_page:next_url,
+						 	has_next:has_next_page,
+						 	data:doc
+					 });
+				}
+				else if(!req.query.max_id){
+			      	res.render('view_tag',{
+						 	msg:'success',
+						 	hashtag_name:req.params.tagName,
+						 	all_post:all_tag_post,
+						 	next_page:next_url,
+						 	has_next:has_next_page,
+						 	data:doc
+					 });
+		      	}	
+		      }//end if
+		    });//end Content.find({'_id':{$in:id_arr}})
+		}
+	});
+	
+});//end ('/get')
+
 router.get('/nav_tags/:tagName',function (req,res){
 	var search_tag = (req.params.tagName).trim();
 	//console.log(chalk.magenta('search # '+search_tag));
@@ -216,73 +386,19 @@ router.get('/nav_tags/:tagName',function (req,res){
 		//console.log(chalk.bgCyan('-------------------'));
 	});
 });
+router.get('/debugaaaaaaaaaaaa/:tagName/:max_id?',function (req,res){
+	
+});
 
-
-router.get('/tags/:tagName',function (req,res){
-	console.log('get req '+req.params.tagName);
+router.get('/where',function (req,res){
 	var requrl = url.format({
 	    protocol: req.protocol,
 	    host: req.get('host'),
 	    pathname: req.originalUrl,
 	});
-	var clean_path = "http://localhost:3000/explore/tags/";
-	//console.log(chalk.bgCyan(clean_path));
-	Content_Tag.find({tag_name:req.params.tagName}, function (err,result) {
-		if(err) {
-			res.json({res:'Error'+err,
-				data:[]
-			});
-		}else if(result){
-			var id_arr = [];
-			for(var i=0;i<result.length;i++){
-	   			id_arr.push(mongoose.Types.ObjectId(result[i].content_id)); 
-	   		}
-			Content
-		    .find({'_id':{$in:id_arr}})
-		    .sort({'createdAt':-1})
-		    .populate(
-		    	{
-		    		path:'owner',
-		    		options: { 
-		    			limit: 5 
-		    		}//end option
-		    	}
-		    )
-		    .exec(function(err, doc) {
-		      if (err){
-		      	console.log(chalk.red('Error'+err));
-		      	res.json({res:'Error'+err,
-					data:[]
-				});
-		      }
-		      if (doc){
-		      	console.log(chalk.green("get doc "+doc.length));
-		      	var image_folder = "/uploads/flash/";
-		      	var html_str="";
-		      	for(var i=0;i<doc.length;i++){
-		      		//console.log(doc[i]);
-		      		doc[i].caption=hili_tag(doc[i].caption,clean_path);
-		      		doc[i].filename=image_folder+doc[i].filename;
-		      	}///end for
-		       	var result = {
-					 	msg:'success',
-					 	hashtag_name:req.params.tagName,
-					 	all_post:doc.length,
-					 	data:doc
-				 }
-					//res.json(result);
-		      	res.render('view_tag',{
-					 	msg:'success',
-					 	hashtag_name:req.params.tagName,
-					 	all_post:doc.length,
-					 	data:doc
-				 });
-		      }//end if
-		    });//end Content.find({'_id':{$in:id_arr}})
-		}
-	});
-	
-});//end ('/get')
+	console.log(requrl);
+	res.json({});
+});
 
 ///////////////////////////////////////////////////
 ///////////////// END tags/tagName  ///////////////

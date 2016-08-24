@@ -25,54 +25,8 @@
 			
 		
 		});//end doc ready
-
 	</script>
-	<style type="text/css">
-		.offset_bg{
-			background-color: #E1F5A9;
-		}
-		.content_tag_bg{
-			background-color: #F7D358;
-		}
-		.about_user_bg{
-			background-color: #D8CEF6;
-		}
-		.image_debug_bg{
-			background-color: #2E64FE;
-		}
-		.jonat-thumbnail {
-			float: left;
-			position: relative;
-			overflow: hidden;
-		}
-		.img_size_preview{
-			width: 275px;
-			height:	275px;
-			margin:10px;
-		}
-		.crop_for_h {
-			/*position: absolute;*/
-			position: relative;
-			left: 50%;
-			top: 50%;
-			height: 100%;
-			width: auto;
-			-webkit-transform: translate(-50%,-50%);
-			-ms-transform: translate(-50%,-50%);
-			transform: translate(-50%,-50%);
-		}
-		.crop_for_v {
-			/*position: absolute;*/
-			position: relative;
-			left: 50%;
-			top: 50%;
-			height: auto;
-			width: 100%;
-			-webkit-transform: translate(-50%,-50%);
-			-ms-transform: translate(-50%,-50%);
-			transform: translate(-50%,-50%);
-		}
-	</style>
+	<% include ../partials/scroll_check %>
 </head>
 <body class="bg_main">
 	<% include ../partials/nav_bar %>
@@ -97,8 +51,8 @@
 	 						<div id='about_user'>
 	 							<div id='user_status' class="row">
 	 								<div class="col-md-4"><%= all_post %> posts</div>
-	  								<div class="col-md-4">Follower</div>
-	  								<div class="col-md-4">Following</div>
+	  								<div class="col-md-4"><%= followers %> follower</div>
+	  								<div class="col-md-4"><%= following %> following</div>
 	 							</div> <!-- end div user_status -->
 	 						</div> <!-- end id  about_user -->
 						</div> <!-- end col-md-8 -->
@@ -107,7 +61,7 @@
 						</div> <!-- end md-2 right offset -->
   					</div>  <!-- end class row -->
   				</div> <!-- end about_user_bg -->
-  				<div class="image_debug_bg">
+  				<div class="image_debug_bg" id="image_content">
   					<% for(var i=0; i<data.length; i++) { %>
 				        <div class='jonat-thumbnail img_size_preview'>
 							<img  id='hash_img"<%= i %>"' src="<%= data[i].filename %>" >
@@ -124,6 +78,17 @@
   			</div>
   			<div class="col-md-2 offset_bg">.col-md-2</div>
 		</div> <!-- end class row -->
+	</div>
+
+	<!-- preload -->
+	<div class="row">
+		<div class="col-md-2 "></div>
+		<div class="col-md-8 content_tag_bg">
+		<div style="margin-top:40px;">
+			<div id='footer_preload' ></div>	
+		</div>
+		</div> <!-- end class="col-md-8 content_tag_bg" -->
+		<div class="col-md-2 "></div>
 	</div>
 </body>
 </html>
