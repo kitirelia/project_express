@@ -27,6 +27,7 @@
 		});//end doc ready
 	</script>
 	<% include ../partials/scroll_check %>
+	<% include ../partials/modal %>
 </head>
 <body class="bg_main">
 	<% include ../partials/nav_bar %>
@@ -64,16 +65,9 @@
   				<div class="image_debug_bg" id="image_content">
   					<% for(var i=0; i<data.length; i++) { %>
 				        <div class='jonat-thumbnail img_size_preview'>
-							<img  id='hash_img"<%= i %>"' src="<%= data[i].filename %>" >
+							<img  id='hash_img<%= data[i]._id %>' src="<%= data[i].filename %>" >
 						</div>
 				    <% } %>
-  					<!-- <?php
-						for($i=0;$i<15;$i++){
-							echo "<div class='jonat-thumbnail img_size_preview'>";
-							echo "<img  id='hash_img".$i."' src='img/pic".$i.".jpg' >";
-							echo "</div>";
-						}
-					?> -->
   				</div>
   			</div>
   			<div class="col-md-2 offset_bg">.col-md-2</div>

@@ -37,6 +37,7 @@
 
 	</script>
 	<% include ../partials/scroll_check %>
+	<% include ../partials/modal %>
 </head>
 <body>
 	<% include ../partials/nav_bar %>
@@ -53,7 +54,7 @@
 				
 				<% for(var i=0; i<data.length; i++) { %>
 			        <div class='jonat-thumbnail img_size_preview'>
-						<img  id='hash_img<%= i %>' src="<%= data[i].filename %>" >
+						<img  id='hash_img<%= data[i]._id %>' src="<%= data[i].filename %>" >
 					</div>
 			    <% } %>
 				</div>	 <!-- end #image_content  -->

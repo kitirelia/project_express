@@ -20,6 +20,77 @@ router.use(function timeLog(req, res, next) {
   next();
 });
 
+
+
+///////////////////////////////////////////////////
+///////////////// modal content  //////////////////
+///////////////////////////////////////////////////
+router.get('/modal/:id',function (req,res){
+	//console.log('id '+req.params.id);
+	var requrl = url.format({
+	    protocol: req.protocol,
+	    host: req.get('host'),
+	    pathname: req.originalUrl,
+	});
+
+	var base_url = requrl;
+	var image_folder = "/uploads/flash/";
+	var owner_username = "b_lank";
+	var owner_fullname="";
+	var owner_image="";
+	var check_index=base_url.indexOf('modal/'+req.params.id);
+	var other_tag_path = base_url.substring(0,(check_index))+"tags/";
+	var nav_to_person = base_url.substring(0,(check_index))+"person/";
+	Content
+	.findOne({'_id':req.params.id},function (err,doc){
+		if(err){
+			console.log(chalk.red("findOne Error "+err));
+			res.json({
+				stat:'error',
+				data:[]
+			});
+		}else{
+			if(doc){
+				//console.log(chalk.green('found content'));
+			//	console.log(chalk.bgGreen(doc));
+				var caption_html=hili_tag(doc.caption,other_tag_path);
+				var create_time = readable_time(doc.createdAt);
+				var image_file=image_folder+doc.filename;
+				User
+				.findOne({'_id':doc.owner},function (err,user){
+					if(err){
+						res.json({
+							stat:'error',
+							data:[]
+						});
+					}else if(user){
+						owner_username =  user.username;
+						nav_to_person = nav_to_person+user.username;
+						owner_fullname = user.name;
+
+						owner_image = image_folder+user.profile_image;
+						res.json({
+							stat:'ok',
+							owner_data:{
+								username:owner_username,
+								nav_data :nav_to_person,
+								fullname:owner_fullname,
+								profile:owner_image
+							},
+							content:{
+								caption:caption_html,
+								time:create_time,
+								image:image_file
+							}
+						});
+						//console.log(chalk.cyan(user));
+					}
+				});
+			}
+		}
+	});	
+});
+
 ///////////////////////////////////////////////////
 ///////////////// /all_user  //////////////////////
 ///////////////////////////////////////////////////
@@ -419,6 +490,7 @@ function hili_tag(str,url){
 					prefix=flag_arr[flag_arr.indexOf(str.charAt(i))];
 					if(prefix==="#"){
 						path =url;
+						console.log('path here '+path);
 					}else if(prefix!="#"){
 						path ="http://www.google.com/";
 					}
