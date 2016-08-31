@@ -69,6 +69,12 @@ router.get('/modal/:id',function (req,res){
 						owner_fullname = user.name;
 
 						owner_image = image_folder+user.profile_image;
+
+						if(caption_html=='null'){
+							caption_html="";
+						}else if(caption_html!='null'){
+							caption_html = owner_username+" "+caption_html;
+						}
 						res.json({
 							stat:'ok',
 							owner_data:{
@@ -490,9 +496,9 @@ function hili_tag(str,url){
 					prefix=flag_arr[flag_arr.indexOf(str.charAt(i))];
 					if(prefix==="#"){
 						path =url;
-						console.log('path here '+path);
+						//console.log('path here '+path);
 					}else if(prefix!="#"){
-						path ="http://www.google.com/";
+						path ="http://www.instagram.com/";
 					}
 					if(!buffering){	
 						buffering=true;
