@@ -39,16 +39,17 @@
 	<% include ../partials/scroll_check %>
 	<% include ../partials/modal %>
 </head>
-<body>
+<body style="background-color:#fafafa;">
 	<% include ../partials/nav_bar %>
 	
 	<div id='all'>
 		<div class="row">
-			<div class="col-md-2 offset_bg">.col-md-4</div> <!-- left offest -->
+			<div class="col-md-2 "></div> <!-- left offest -->
 	  		<div class="col-md-8 content_tag_bg">
 				<div id='tag_title '>
-					<h1>#<%= hashtag_name %></h3>
-					<h3><%= all_post %> Post</h1>
+					<h1 style="text-align:center;">#<%= hashtag_name %></h1>
+					<div style="text-align:center;"><span class="num_post_dec"><%= all_post %></span><span class="num_post_dec_2"> post</span></div>
+					<!-- <h4 style="text-align:center;"> posts</h4> -->
 				</div>  	
 				<div id="image_content" class="content_img_bg">
 				
@@ -60,7 +61,7 @@
 				</div>	 <!-- end #image_content  -->
 				
 	  		</div> <!-- end class="col-md-8 content_tag_bg" -->
-	  		<div class="col-md-2 offset_bg">.col-md-4</div> <!-- righ offest -->
+	  		<div class="col-md-2 "></div> <!-- righ offest -->
 		</div> <!-- end class="row" -->
 	</div> <!-- end id='all' -->
 	<div class="row">

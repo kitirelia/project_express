@@ -4,6 +4,8 @@ var bodyParser = require('body-parser');
 var activity = require('./routes/activity');
 var upload = require('./routes/upload');
 var populate = require('./routes/populate');
+var auth = require('./routes/auth');
+
 var gutil = require('gulp-util');
 //var api = require('./routes/api');
 var user_api = require('./routes/v1');
@@ -27,6 +29,7 @@ app.use('/activity',activity);
 app.use('/upload',upload);
 app.use('/bypass_upload',bypass_upload);
 app.use('/newfeed',newfeed);
+app.use('/auth',auth);
 //app.use('/api',api);
 app.use('/api/v1',user_api);
 app.use('/populate',populate);

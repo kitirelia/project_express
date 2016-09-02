@@ -12,34 +12,7 @@ router.get('/', function(req, res) {
   res.send('Activity Page');
 });
 
-//------------ start modify
-// router.get('/user',function(req,res){
-// 	//var id = req.params.id;
-// 	console.log("search id ");
-// });
-// router.get('/user/:id', function (req, res) {
-//     var id = req.params.id;
-//     var arr= users.findById(id);
 
-//    var obj={
-//    		data:{
-// 		   	head:{
-// 		   		title:"head_title"
-// 		   	},
-// 		   	body:{
-// 		   		body_color:'black',
-// 		   		username:'mel_b',
-// 		   		message:'hello this is me!',
-// 		   		names:['morata','worth it','acivii','john legend']
-// 		   	},
-// 		   	footer:{
-// 		   		message:null,
-// 		   		blank:undefined
-// 		   	}
-// 	    }
-//     }
-//     res.render('pages/feed',obj);
-// });
 
 // define the about route
 router.get('/about', function(req, res) {

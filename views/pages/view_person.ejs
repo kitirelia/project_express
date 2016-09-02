@@ -31,29 +31,30 @@
 </head>
 <body class="bg_main">
 	<% include ../partials/nav_bar %>
-	<div id='debug_container'>
+	<div id='debug_container' style="margin-top:40px;">
 		<div class="row">
-			<div class="col-md-2 offset_bg">.col-md-2</div>
-  			<div class="col-md-8 content_tag_bg">
-  				<div class="about_user_bg">
+			<div class="col-md-2 "></div>
+  			<div class="col-md-8 ">
+  				<div class="" style="margin-bottom:40px;">
   					<div class='row'>
-  						<div class="col-md-2">
-							<img src="<%= profile_img  %>"  alt="profile image" height="150px" width="150px">
+  						<div class="col-md-4">
+							<img src="<%= profile_img  %>"  alt="profile image" height="150px" width="150px" class="img-circle img_border" style='margin-left: 30px'>
 						</div> <!-- end div-img-col-md-2 -->
-						<div class="col-md-8">
+						<div class="col-md-6">
 							<div id='user_name'>
 	 							<div>
-	 								<h1><%= user_name %></h1>
+	 								<h1 class="username_deco"><%= user_name %></h1>
+	 								<!-- <button  type="button" class="btn btn-success ">follow</button> -->
 	 							</div>
 	 							<div>
-	 								<%= nickname %>
+	 								<h3  class="fullname_deco"><%= nickname %></h3>
 	 							</div>
 	 						</div>  <!-- end id user_name -->
 	 						<div id='about_user'>
 	 							<div id='user_status' class="row">
-	 								<div class="col-md-4"><%= all_post %> posts</div>
-	  								<div class="col-md-4"><%= followers %> follower</div>
-	  								<div class="col-md-4"><%= following %> following</div>
+	 								<div class="col-md-4"><span class="deco_span"><%= all_post %></span> <span class="deco_span_unit">posts</span></div>
+	  								<div class="col-md-4"><span class="deco_span"><%= followers %></span> <span class="deco_span_unit"> follower</span></div>
+	  								<div class="col-md-4"><span class="deco_span"><%= following %></span> <span class="deco_span_unit"> following</span></div>
 	 							</div> <!-- end div user_status -->
 	 						</div> <!-- end id  about_user -->
 						</div> <!-- end col-md-8 -->
@@ -70,7 +71,7 @@
 				    <% } %>
   				</div>
   			</div>
-  			<div class="col-md-2 offset_bg">.col-md-2</div>
+  			<div class="col-md-2 "></div>
 		</div> <!-- end class row -->
 	</div>
 
